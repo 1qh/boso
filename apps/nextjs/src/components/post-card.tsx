@@ -1,0 +1,50 @@
+'use client'
+
+import { TrashIcon } from '@radix-ui/react-icons'
+import { format, formatDistance } from 'date-fns'
+import { toast } from 'sonner'
+
+import type { RouterOutputs } from '@a/api'
+import { Button } from '@a/ui/button'
+
+import { api } from '~/trpc/react'
+
+export const PostCard = ({ post }: { readonly post: RouterOutputs['post']['all'][number] }) => {
+  const utils = api.useUtils(),
+    deletePost = api.post.delete.useMutation({
+      onError: err =>
+        toast.error(
+          err.data?.code === 'UNAUTHORIZED'
+            ? 'You must be logged in to delete a post'
+            : 'Failed to delete post'
+        ),
+      onSuccess: async () => utils.post.invalidate()
+    })
+  return (
+    <div className='group my-2.5 flex w-full items-center rounded-lg bg-muted p-3'>
+      <div className='group grow space-y-1'>
+        <p className='text-2xl font-semibold'>{post.title}</p>
+
+        <p className='text-xs group-hover:hidden'>{format(post.createdAt, 'd/L/y')}</p>
+
+        <p className='hidden text-xs group-hover:block'>
+          {formatDistance(post.createdAt, new Date(), { addSuffix: true })}
+        </p>
+
+        <p>{post.content}</p>
+      </div>
+
+      <Button
+        className='size-0 transition-all duration-300 group-hover:mr-5 group-hover:size-9'
+        onClick={() => deletePost.mutate(post.id)}
+        size='icon'
+        variant='destructive'>
+        {deletePost.isPending ? (
+          <p className='size-6 animate-spin rounded-full border-2 border-foreground border-t-transparent' />
+        ) : (
+          <TrashIcon className='size-6' />
+        )}
+      </Button>
+    </div>
+  )
+}
