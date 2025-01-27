@@ -1,0 +1,42 @@
+{
+  "name": "t",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "tooling/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "git clean -xdf node_modules bun.lock",
+    "clean:workspaces": "turbo run clean",
+    "db:push": "turbo -F @a/db push",
+    "db:studio": "turbo -F @a/db studio",
+    "dev": "turbo watch dev --continue",
+    "dev:next": "turbo watch dev -F @a/nextjs...",
+    "fix": "sort-package-json --write **/package.json && eslint . --fix && bun lint:fix && bun format:fix && bun typecheck",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
+    "postinstall": "bun lint:ws",
+    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "lint:ws": "bunx sherif@latest",
+    "typecheck": "turbo run typecheck",
+    "ui-add": "turbo run ui-add"
+  },
+  "prettier": "@a/prettier-config",
+  "devDependencies": {
+    "@a/prettier-config": "*",
+    "@turbo/gen": "latest",
+    "@types/bun": "latest",
+    "concurrently": "latest",
+    "eslint-plugin-sort-keys-custom-order": "latest",
+    "eslint-plugin-tailwindcss": "latest",
+    "prettier": "latest",
+    "sort-package-json": "latest",
+    "turbo": "latest",
+    "typescript": "latest"
+  },
+  "packageManager": "bun@1.1.45"
+}
